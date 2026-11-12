@@ -12,3 +12,4 @@ cat /etc/hosts | while read ip name rest; do
     validate_ip "$name" "$ip" "8.8.8.8"
 done
 #mihnea
+#teodora
