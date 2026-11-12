@@ -1,27 +1,13 @@
 #!/bin/bash
+validate_ip() {
+    local host=$1
+    local ip=$2
+    local dns=$3
+    nslookup "$host" "$dns" 2>/dev/null | grep -q "Address: $ip" || echo "Bogus IP for $host in /etc/hosts!"
+}
 
 cat /etc/hosts | while read ip name rest; do
-	if [ -z "$ip" ] || [[ "$ip" == \#* ]]; then
-		continue
-	fi
-
-	if [[ "$name" == "localhost" ]] || [[ "$ip" == "127."* ]] || [[ "$ip" == *":"* ]]; then
-		continue
-	fi
-
-	ok=0
-	nslookup "$name" 2>/dev/null | while read nume real rest; do
-		if [[ "$nume" == "Address:" ]] && [[ "$ok" == 0 ]]; then
-			ok=1
-			continue
-		fi
-
-		if [[ "$nume" != "Address:" ]]; then
-			continue
-		fi
-		if [ "$real" != "$ip" ]; then
-                echo "Bogus IP for $name in /etc/hosts!"
-		fi
-		break
-	done
+    [[ -z "$ip" || "$ip" =~ ^# ]] && continue
+    [[ "$name" == "localhost" ]] && continue
+    validate_ip "$name" "$ip" "8.8.8.8"
 done
