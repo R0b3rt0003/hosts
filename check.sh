@@ -13,3 +13,4 @@ cat /etc/hosts | while read ip name rest; do
 done
 #mihnea
 #teodora
+#razvvan
